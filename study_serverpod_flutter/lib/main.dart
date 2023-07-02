@@ -2,11 +2,6 @@ import 'package:study_serverpod_client/study_serverpod_client.dart';
 import 'package:flutter/material.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
 
-// Sets up a singleton client object that can be used to talk to the server from
-// anywhere in our app. The client is generated from your server code.
-// The client is set up to connect to a Serverpod running on a local server on
-// the default port. You will need to modify this to connect to staging or
-// production servers.
 var client = Client('http://localhost:8080/')
   ..connectivityMonitor = FlutterConnectivityMonitor();
 
@@ -43,6 +38,7 @@ class MyHomePageState extends State<MyHomePage> {
   // the server or null if no result exists yet.
   String? _resultMessage;
   String? _errorMessage;
+  String? _article;
 
   final _textEditingController = TextEditingController();
 
@@ -52,8 +48,10 @@ class MyHomePageState extends State<MyHomePage> {
   void _callHello() async {
     try {
       final result = await client.example.hello(_textEditingController.text);
+      final resultArticle = await client.example.getArticle(1);
       setState(() {
         _resultMessage = result;
+        _article = resultArticle.toString();
       });
     } catch (e) {
       setState(() {
@@ -92,6 +90,8 @@ class MyHomePageState extends State<MyHomePage> {
               resultMessage: _resultMessage,
               errorMessage: _errorMessage,
             ),
+            const SizedBox(height: 16),
+            Text(_article ?? ''),
           ],
         ),
       ),
